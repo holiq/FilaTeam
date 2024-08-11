@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Team;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +15,29 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        User::query()->insert(User::factory(50)->raw());
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $users = User::query()->latest()->get()->take(20);
+
+        User::query()->insert([
+            'name' => 'Holiq',
+            'email' => 'holiq@gmail.com',
+            'password' => Hash::make('11111111'),
+        ]);
+
+        $team = Team::query()->create([
+            'name' => 'KoalaFacade',
+            'user_id' => 1,
+        ]);
+
+        $users->each(function (User $user) use ($team) {
+            $user->update([
+                'current_team_id' => $team->id,
+            ]);
+        });
+
+        $team->users()->attach($users->pluck('id'), [
+            'role' => 'member'
         ]);
     }
 }
