@@ -55,9 +55,9 @@ class User extends Authenticatable
         return $this->belongsTo(Team::class, 'current_team_id');
     }
 
-    public function isCurrentTeam(Team $team): bool
+    public function isCurrentTeam(Team|Collection|null $team): bool
     {
-        return $team->id === $team->current_team_id;
+        return $team?->id == $this->current_team_id;
     }
 
     public function ownedTeams(): HasMany
@@ -72,7 +72,7 @@ class User extends Authenticatable
 
     public function allTeams(): Collection
     {
-        return $this->ownedTeams->merge([$this->teams])->sortByAsc('name');
+        return collect($this->ownedTeams)->merge($this->teams)->sortBy('name');
     }
 
     public function ownsTeam(Team $team): bool
@@ -100,5 +100,15 @@ class User extends Authenticatable
         $this->setRelation('currentTeam', $team);
 
         return true;
+    }
+
+    public function hasTeamRole(Team $team, string $role): bool
+    {
+        if ($this->ownsTeam($team)) {
+            return true;
+        }
+
+        return $this->belongsToTeam($team) && $team->users()->wherePivot('user_id', $this->id)
+            ->wherePivot('role', $role)->exists();
     }
 }

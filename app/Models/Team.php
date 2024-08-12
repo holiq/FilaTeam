@@ -34,7 +34,7 @@ class Team extends Model
 
     public function hasUser(User $user): bool
     {
-        return $this->users->contains($user);
+        return $this->users->contains($user) || $user->ownsTeam($this);
     }
 
     public function removeUser(User $user): void
