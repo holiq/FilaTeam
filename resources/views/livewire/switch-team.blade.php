@@ -10,7 +10,7 @@
                     color="gray"
                     icon="heroicon-c-user-group"
             >
-                {{ auth()->user()->currentTeam->name }}
+                {{ auth()->user()->currentTeam->name ?? 'Select Team' }}
             </x-filament::dropdown.header>
         </x-slot>
 
@@ -27,13 +27,10 @@
                 <x-filament::dropdown.list.item
                         :color="auth()->user()->isCurrentTeam($team) ? 'primary' : null"
                         icon="heroicon-m-chevron-right"
-                        tag="{{ auth()->user()->isCurrentTeam($team) ? 'button' : 'form' }}"
-                        action="{{ route('switch-team') }}"
-                        method="post"
+                        tag="button"
+                        :disabled="auth()->user()->isCurrentTeam($team) ?? false"
+                        wire:click="changeTeam({{ $team }})"
                 >
-                    @method('PUT')
-                    <input type="hidden" name="team_id" value="{{ $team->id }}">
-
                     {{ $team->name }}
                 </x-filament::dropdown.list.item>
             @endforeach

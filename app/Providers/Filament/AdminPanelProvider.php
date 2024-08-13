@@ -18,6 +18,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -38,9 +39,7 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 name: PanelsRenderHook::USER_MENU_PROFILE_AFTER,
                 hook: function () {
-                    $teams = auth()->user()->allTeams();
-
-                    return view('filament.hooks.team-switcher', compact('teams'));
+                    return Blade::render('<livewire:switch-team />');
                 },
             )
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
