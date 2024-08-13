@@ -34,9 +34,10 @@ class TeamResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('owner.name')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('role')
+                    ->default(function (Team $model) {
+                        return $model->getRoleUser(auth()->user());
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -54,6 +55,12 @@ class TeamResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->before(fn (Team $team) => $team->purge()),
+                Tables\Actions\Action::make('Leave')
+                    ->requiresConfirmation()
+                    ->color('danger')
+                    ->action(fn (Team $team) => $team->removeUser(auth()->user()))
+                    ->icon('heroicon-m-x-circle')
+                    ->hidden(fn (Team $team) => $team->getRoleUser(auth()->user()) === 'Owner'),
             ]);
     }
 

@@ -24,12 +24,13 @@ class Team extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'team_user', 'team_id', 'user_id');
+        return $this->belongsToMany(User::class, 'team_user', 'team_id', 'user_id')
+            ->withPivot('role')->withTimestamps();
     }
 
     public function allUsers(): Collection
     {
-        return $this->users()->merge([$this->owner]);
+        return $this->users->merge([$this->owner]);
     }
 
     public function hasUser(User $user): bool
@@ -59,5 +60,11 @@ class Team extends Model
         $this->users()->detach();
 
         $this->delete();
+    }
+
+    public function getRoleUser(User $user): ?string
+    {
+        return $user->ownsTeam($this) ? 'Owner' : collect($this->users->find($user->id))
+            ->pluck('role')->implode(' ');
     }
 }
