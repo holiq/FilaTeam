@@ -54,13 +54,15 @@ class TeamResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
-                    ->before(fn (Team $team) => $team->purge()),
+                    ->before(fn (Team $team) => $team->purge())
+                    ->after(fn ($livewire) => $livewire->dispatch('refreshCurrentTeam')),
                 Tables\Actions\Action::make('Leave')
                     ->requiresConfirmation()
                     ->color('danger')
                     ->action(fn (Team $team) => $team->removeUser(auth()->user()))
                     ->icon('heroicon-m-x-circle')
-                    ->hidden(fn (Team $team) => $team->getRoleUser(auth()->user()) === 'Owner'),
+                    ->hidden(fn (Team $team) => $team->getRoleUser(auth()->user()) === 'Owner')
+                    ->after(fn ($livewire) => $livewire->dispatch('refreshCurrentTeam')),
             ]);
     }
 

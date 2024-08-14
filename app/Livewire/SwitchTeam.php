@@ -9,6 +9,8 @@ use Livewire\Component;
 
 class SwitchTeam extends Component
 {
+    protected $listeners = ['refreshCurrentTeam' => '$refresh'];
+
     public function render(): View
     {
         return view('livewire.switch-team');

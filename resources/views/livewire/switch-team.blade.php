@@ -10,7 +10,7 @@
                     color="gray"
                     icon="heroicon-c-user-group"
             >
-                {{ auth()->user()->currentTeam->name ?? 'Select Team' }}
+                {{ auth()->user()->currentTeam->name ?? __('Select Team') }}
             </x-filament::dropdown.header>
         </x-slot>
 
@@ -20,7 +20,6 @@
         >
             {{ __('Select Team') }}
         </x-filament::dropdown.header>
-
 
         <x-filament::dropdown.list>
             @foreach(auth()->user()->allTeams() as $team)
