@@ -29,6 +29,7 @@
                         tag="button"
                         :disabled="auth()->user()->isCurrentTeam($team) ?? false"
                         wire:click="changeTeam({{ $team }})"
+                        x-on:click="$dispatch('hasRefreshedTeam')"
                 >
                     {{ $team->name }}
                 </x-filament::dropdown.list.item>
