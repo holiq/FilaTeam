@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -108,5 +109,7 @@ class DatabaseSeeder extends Seeder
         $ownerFour->update([
             'current_team_id' => $teamFour->id,
         ]);
+
+        Task::query()->insert(Task::factory(100)->raw());
     }
 }
